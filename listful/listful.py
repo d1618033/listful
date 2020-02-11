@@ -1,4 +1,5 @@
 import collections
+import operator
 import typing
 
 from listful.exceptions import MoreThanOneResultException, ZeroResultsException
@@ -49,7 +50,7 @@ class Listful(typing.List[T]):
             # pylint: disable=unsubscriptable-object
             if len(self) > 0 and isinstance(self[0], dict):
                 getter = typing.cast(
-                    typing.Callable[[T, str], typing.Any], dict.__getitem__
+                    typing.Callable[[T, str], typing.Any], operator.getitem
                 )
             else:
                 getter = getattr
@@ -90,8 +91,55 @@ class Listful(typing.List[T]):
         super().append(item)  # pylint: disable=no-member
         self.rebuild_indexes_for_item(item)
 
-    def remove(self, item: T) -> None:
-        super().remove(item)  # pylint: disable=no-member
+    def _remove_item_from_indexes(self, item: T) -> None:
         for field in self._fields:
             value = self._getter(item, field)
             self._indexes[field][value].remove(item)
+
+    def remove(self, item: T) -> None:
+        super().remove(item)  # pylint: disable=no-member
+        self._remove_item_from_indexes(item)
+
+    @typing.overload
+    def __setitem__(self, index: int, item: T) -> None:
+        ...  # pragma: nocover
+
+    @typing.overload
+    def __setitem__(self, index: slice, item: typing.Iterable[T]) -> None:
+        ...  # pragma: nocover
+
+    def __setitem__(
+        self,
+        index: typing.Union[int, slice],
+        item: typing.Union[T, typing.Iterable[T]],
+    ) -> None:
+        self._remove_indexes_from_multiple_items(index)
+        if isinstance(index, slice):
+            items = typing.cast(typing.Iterable[T], item)
+            super().__setitem__(  # pylint: disable=no-member
+                typing.cast(slice, index), items
+            )
+            for item_ in items:
+                self.rebuild_indexes_for_item(item_)
+        else:
+            item = typing.cast(T, item)
+            super().__setitem__(  # pylint: disable=no-member
+                typing.cast(int, index), item
+            )
+            self.rebuild_indexes_for_item(item)
+
+    def __delitem__(self, index: typing.Union[int, slice]) -> None:
+        self._remove_indexes_from_multiple_items(index)
+        super().__delitem__(index)  # pylint: disable=no-member
+
+    def _remove_indexes_from_multiple_items(
+        self, index: typing.Union[int, slice]
+    ) -> None:
+        item = self[index]  # pylint: disable=unsubscriptable-object
+        if isinstance(index, slice):
+            items = typing.cast(typing.Iterable[T], item)
+            for item_ in items:
+                self._remove_item_from_indexes(item_)
+        else:
+            item = typing.cast(T, item)
+            self._remove_item_from_indexes(item)

@@ -45,9 +45,37 @@ def test_append(basic_listful: BasicListful) -> None:
     assert basic_listful.filter(x=3, y=17).one_or_none() == item
 
 
+def test_set_item(basic_listful: BasicListful) -> None:
+    item = {'x': 3, 'y': 17}
+    basic_listful[2] = item
+    assert basic_listful.filter(x=3).to_list() == [
+        {'x': 3, 'y': 4},
+        {'x': 3, 'y': 17},
+    ]
+
+
+def test_set_item_slice(basic_listful: BasicListful) -> None:
+    items = [{'x': 3, 'y': 17}, {'x': 3, 'y': 18}]
+    basic_listful[1:3] = items
+    assert basic_listful.filter(x=3).to_list() == [
+        {'x': 3, 'y': 17},
+        {'x': 3, 'y': 18},
+    ]
+
+
 def test_remove(basic_listful: BasicListful) -> None:
     basic_listful.remove({'x': 3, 'y': 5})
     assert basic_listful.filter(x=3).one_or_none() == {'x': 3, 'y': 4}
+
+
+def test_del(basic_listful: BasicListful) -> None:
+    del basic_listful[2]
+    assert basic_listful.filter(x=3).one_or_none() == {'x': 3, 'y': 4}
+
+
+def test_del_slice(basic_listful: BasicListful) -> None:
+    del basic_listful[1:3]
+    assert basic_listful.filter(x=3).one_or_none() is None
 
 
 def test_object_listful(object_listful: ObjectListful) -> None:
