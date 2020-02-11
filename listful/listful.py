@@ -46,8 +46,11 @@ class Listful(typing.List[T]):
         super().__init__(iterable)
         self._fields = fields
         if getter is None:
+            # pylint: disable=unsubscriptable-object
             if len(self) > 0 and isinstance(self[0], dict):
-                getter = dict.__getitem__
+                getter = typing.cast(
+                    typing.Callable[[T, str], typing.Any], dict.__getitem__
+                )
             else:
                 getter = getattr
         self._getter: typing.Callable[[T, str], typing.Any] = getter
