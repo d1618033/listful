@@ -11,7 +11,6 @@ def basic_listful() -> Listful[typing.Dict[str, int]]:
     return Listful(
         [{'x': 1, 'y': 2}, {'x': 3, 'y': 4}, {'x': 3, 'y': 5}],
         fields=['x', 'y'],
-        getter=dict.__getitem__,
     )
 
 
@@ -25,4 +24,18 @@ def object_listful() -> Listful[Item]:
             )
         ),
         fields=['x', 'y'],
+    )
+
+
+@pytest.fixture()
+def object_custom_getter_listful() -> Listful[Item]:
+    return Listful(
+        list(
+            map(
+                lambda d: Item(**d),
+                [{'x': 1, 'y': 2}, {'x': 3, 'y': 4}, {'x': 3, 'y': 5}],
+            )
+        ),
+        fields=['x', 'y'],
+        getter=getattr,
     )

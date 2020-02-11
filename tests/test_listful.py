@@ -53,3 +53,7 @@ def test_remove(basic_listful: BasicListful) -> None:
 def test_object_listful(object_listful: ObjectListful) -> None:
     object_listful.remove(Item(x=3, y=5))
     assert object_listful.filter(x=3).one_or_none() == Item(x=3, y=4)
+
+
+def test_object_listful_custom_getter(object_custom_getter_listful: ObjectListful) -> None:
+    assert object_custom_getter_listful.filter(x=3, y=4).one_or_none() == Item(x=3, y=4)

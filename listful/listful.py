@@ -46,7 +46,10 @@ class Listful(typing.List[T]):
         super().__init__(iterable)
         self._fields = fields
         if getter is None:
-            getter = getattr
+            if len(self) > 0 and isinstance(self[0], dict):
+                getter = dict.__getitem__
+            else:
+                getter = getattr
         self._getter: typing.Callable[[T, str], typing.Any] = getter
         self._indexes: typing.Dict[
             str, typing.Dict[typing.Any, typing.List[T]]
