@@ -2,7 +2,7 @@ import typing
 
 import pytest
 
-from listful import Listful, MoreThanOneResultException, ZeroResultsException
+from listful import Listful, MoreThanOneResultException, NotFoundException
 from listful._internal.testing_utils import Item
 
 BasicListful = Listful[typing.Dict[str, int]]
@@ -28,7 +28,7 @@ def test_filter_multiple_fields_in_filter(basic_listful: BasicListful) -> None:
 
 
 def test_one_or_raises(basic_listful: BasicListful) -> None:
-    with pytest.raises(ZeroResultsException):
+    with pytest.raises(NotFoundException):
         assert basic_listful.filter(x=3, y=17).one_or_raise()
     with pytest.raises(MoreThanOneResultException):
         assert basic_listful.filter(x=3).one_or_raise()

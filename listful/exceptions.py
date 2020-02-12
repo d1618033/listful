@@ -1,4 +1,4 @@
-class ZeroResultsException(BaseException):
+class NotFoundException(BaseException):
     pass
 
 

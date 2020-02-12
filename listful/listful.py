@@ -2,7 +2,7 @@ import collections
 import operator
 import typing
 
-from listful.exceptions import MoreThanOneResultException, ZeroResultsException
+from listful.exceptions import MoreThanOneResultException, NotFoundException
 
 T = typing.TypeVar('T')
 
@@ -29,7 +29,7 @@ class Results(typing.Generic[T]):
             raise MoreThanOneResultException(
                 f'Found more than one result for filter {self._filter}: {results}'
             )
-        raise ZeroResultsException(
+        raise NotFoundException(
             f'Found zero results for filter {self._filter}'
         )
 
