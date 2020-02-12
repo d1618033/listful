@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "listful"
-version = "0.1.1"
+version = "0.1.2"
 description = "efficient filtering of lists of objects"
 authors = ["David S <d1618033@gmail.com>"]
 license = "MIT"
