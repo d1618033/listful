@@ -4,7 +4,7 @@ import typing
 from listful import MoreThanOneResultException, NotFoundException
 from listful.exceptions import ListfulsMismatchException
 from listful.index import Index, SimpleIndex
-from listful.types import GETTER, ITEM, VALUE
+from listful.types import FIELD, GETTER, ITEM, VALUE
 from listful.utils import intersect_lists
 
 
@@ -12,7 +12,7 @@ class Listful(typing.List[ITEM], typing.Generic[ITEM, VALUE]):
     def __init__(
         self,
         iterable: typing.Iterable[ITEM],
-        fields: typing.List[str],
+        fields: typing.List[FIELD],
         getter: typing.Optional[GETTER[ITEM, VALUE]] = None,
     ):
         super().__init__(iterable)
@@ -24,7 +24,7 @@ class Listful(typing.List[ITEM], typing.Generic[ITEM, VALUE]):
             else:
                 getter = getattr
         self.getter: GETTER[ITEM, VALUE] = getter
-        self._indexes: typing.Dict[str, Index[ITEM, VALUE]] = {}
+        self._indexes: typing.Dict[FIELD, Index[ITEM, VALUE]] = {}
         self._build_indexes()
 
     def _build_indexes(self) -> None:
@@ -54,7 +54,7 @@ class Listful(typing.List[ITEM], typing.Generic[ITEM, VALUE]):
             results = self
         return Results(results, filter_=kwargs, source=self)
 
-    def get_all_for_field(self, field: str) -> typing.List[VALUE]:
+    def get_all_for_field(self, field: FIELD) -> typing.List[VALUE]:
         return [
             self.getter(element, field)
             for element in self  # pylint: disable=not-an-iterable
@@ -154,7 +154,7 @@ class Results(typing.Generic[ITEM, VALUE]):
     def __init__(
         self,
         results: typing.Sequence[ITEM],
-        filter_: typing.Dict[str, VALUE],
+        filter_: typing.Dict[FIELD, VALUE],
         source: 'Listful[ITEM, VALUE]',
     ):
         self._source = source
