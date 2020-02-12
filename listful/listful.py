@@ -5,7 +5,7 @@ from listful import MoreThanOneResultException, NotFoundException
 from listful.exceptions import ListfulsMismatchException
 from listful.index import Index, SimpleIndex
 from listful.types import FIELD, GETTER, ITEM, VALUE
-from listful.utils import intersect_lists
+from listful.utils import intersect_lists, naive_find_elements_in_list
 
 
 class Listful(typing.List[ITEM], typing.Generic[ITEM, VALUE]):
@@ -41,11 +41,9 @@ class Listful(typing.List[ITEM], typing.Generic[ITEM, VALUE]):
             if field in self._indexes:
                 new_results = self._indexes[field].get(value)
             else:
-                new_results = [
-                    element
-                    for element in self  # pylint: disable=not-an-iterable
-                    if self.getter(element, field) == value
-                ]
+                new_results = naive_find_elements_in_list(
+                    self, field, value, self.getter
+                )
             if results is None:
                 results = new_results
             else:
