@@ -3,7 +3,7 @@ import typing
 
 from listful import MoreThanOneResultException, NotFoundException
 from listful.exceptions import ListfulsMismatchException
-from listful.index import Index, NaiveIndex, SimpleIndex
+from listful.index import Index, SimpleIndex
 from listful.types import GETTER, ITEM, VALUE
 from listful.utils import intersect_lists
 
@@ -38,9 +38,14 @@ class Listful(typing.List[ITEM], typing.Generic[ITEM, VALUE]):
     def filter(self, **kwargs: typing.Any) -> 'Results[ITEM, VALUE]':
         results = None
         for field, value in kwargs.items():
-            if field not in self._indexes:
-                self._indexes[field] = NaiveIndex(self.getter, field, self)
-            new_results = self._indexes[field].get(value)
+            if field in self._indexes:
+                new_results = self._indexes[field].get(value)
+            else:
+                new_results = [
+                    element
+                    for element in self  # pylint: disable=not-an-iterable
+                    if self.getter(element, field) == value
+                ]
             if results is None:
                 results = new_results
             else:

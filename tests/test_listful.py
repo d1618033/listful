@@ -98,6 +98,15 @@ def test_filter_non_indexed_field() -> None:
     assert items.get_all_for_field('y') == [2, 4]
 
 
+def test_filter_non_indexed_field_add_del() -> None:
+    items = BasicListful([{'x': 1, 'y': 2}, {'x': 3, 'y': 4}], fields=['x'])
+    assert items.filter(y=2).one_or_none() == {'x': 1, 'y': 2}
+    del items[0]
+    assert items.filter(y=2).one_or_none() is None
+    items[0] = {'x': 3, 'y': 2}
+    assert items.filter(y=2).one_or_none() == {'x': 3, 'y': 2}
+
+
 def test_get_all_for_field(basic_listful: BasicListful) -> None:
     assert basic_listful.get_all_for_field('x') == [1, 3, 3]
 
