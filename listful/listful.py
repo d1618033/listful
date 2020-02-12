@@ -89,6 +89,18 @@ class Listful(typing.List[T]):
             results = self
         return Results(results, filter_=kwargs)
 
+    def get_all_for_field(self, field: str) -> typing.List[T]:
+        if field in self._indexes:
+            return [
+                key
+                for key, value in self._indexes[field].items()
+                for _ in value
+            ]
+        return [
+            self._getter(element, field)
+            for element in self  # pylint: disable=not-an-iterable
+        ]
+
     def rebuild_indexes_for_item(self, item: T) -> None:
         for field in self._fields:
             value = self._getter(item, field)

@@ -58,6 +58,13 @@ Traceback (most recent call last):
 listful.exceptions.MoreThanOneResultException: Found more than one result for filter {'x': 2}: [{'x': 2, 'y': 20}, {'x': 2, 'y': 30}]
 ```
 
+* Get all values for a specific field
+
+```
+>>> data.get_all_for_field('x')
+[1, 2, 2]
+```
+
 ### Updating indexes:
 
 `Listful` has the same api as `list`, so you can get/set/delete items the same way 
