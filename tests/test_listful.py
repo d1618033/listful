@@ -99,3 +99,10 @@ def test_filter_non_indexed_field() -> None:
 
 def test_get_all_for_field(basic_listful: BasicListful) -> None:
     assert basic_listful.get_all_for_field('x') == [1, 3, 3]
+
+
+def test_extend(basic_listful: BasicListful) -> None:
+    basic_listful.extend(
+        Listful([{'x': 10, 'y': 20}, {'x': 20, 'y': 40}], fields=['x', 'y'])
+    )
+    assert basic_listful.filter(x=10).one_or_raise() == {'x': 10, 'y': 20}

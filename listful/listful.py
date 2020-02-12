@@ -162,3 +162,7 @@ class Listful(typing.List[T]):
         else:
             item = typing.cast(T, item)
             self._remove_item_from_indexes(item)
+
+    def extend(self, iterable: typing.Iterable[T]) -> None:
+        for element in iterable:
+            self.append(element)
