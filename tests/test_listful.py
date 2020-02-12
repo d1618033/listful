@@ -101,6 +101,11 @@ def test_get_all_for_field(basic_listful: BasicListful) -> None:
     assert basic_listful.get_all_for_field('x') == [1, 3, 3]
 
 
+def test_get_all_for_field_after_seitem(basic_listful: BasicListful) -> None:
+    basic_listful[1] = {'x': 2, 'y': 17}
+    assert basic_listful.get_all_for_field('x') == [1, 2, 3]
+
+
 def test_extend(basic_listful: BasicListful) -> None:
     basic_listful.extend(
         Listful([{'x': 10, 'y': 20}, {'x': 20, 'y': 40}], fields=['x', 'y'])
