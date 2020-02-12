@@ -2,7 +2,7 @@
 name = "listful"
 version = "0.1.1"
 description = "efficient filtering of lists of objects"
-authors = ["David S <d1618033>"]
+authors = ["David S <d1618033@gmail.com>"]
 license = "MIT"
 readme = 'README.md'
 repository = "https://github.com/d1618033/listful"
