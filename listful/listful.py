@@ -71,10 +71,17 @@ class Listful(typing.List[T]):
     def filter(self, **kwargs: typing.Any) -> Results[T]:
         results = None
         for field, value in kwargs.items():
-            if results is None:
-                results = self._indexes[field][value]
-            else:
+            if field in self._indexes:
                 new_results = self._indexes[field][value]
+            else:
+                new_results = [
+                    element
+                    for element in self  # pylint: disable=not-an-iterable
+                    if self._getter(element, field) == value
+                ]
+            if results is None:
+                results = new_results
+            else:
                 results = [
                     result for result in results if result in new_results
                 ]

@@ -89,3 +89,8 @@ def test_object_listful_custom_getter(
     assert object_custom_getter_listful.filter(x=3, y=4).one_or_none() == Item(
         x=3, y=4
     )
+
+
+def test_filter_non_indexed_field() -> None:
+    items = Listful([{'x': 1, 'y': 2}, {'x': 3, 'y': 4}], fields=['x'])
+    assert items.filter(y=2).one_or_none() == {'x': 1, 'y': 2}
