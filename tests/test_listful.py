@@ -106,3 +106,9 @@ def test_extend(basic_listful: BasicListful) -> None:
         Listful([{'x': 10, 'y': 20}, {'x': 20, 'y': 40}], fields=['x', 'y'])
     )
     assert basic_listful.filter(x=10).one_or_raise() == {'x': 10, 'y': 20}
+
+
+def test_to_listful(basic_listful: BasicListful) -> None:
+    assert basic_listful.filter(x=3).to_listful().filter(
+        y=4
+    ).one_or_none() == {'x': 3, 'y': 4}

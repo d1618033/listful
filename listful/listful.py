@@ -12,7 +12,9 @@ class Results(typing.Generic[T]):
         self,
         results: typing.Sequence[T],
         filter_: typing.Dict[str, typing.Any],
+        source: 'Listful[T]',
     ):
+        self._source = source
         self._filter = filter_
         self._results = results
 
@@ -36,6 +38,9 @@ class Results(typing.Generic[T]):
     def to_list(self) -> typing.List[T]:
         return list(self._results)
 
+    def to_listful(self) -> 'Listful[T]':
+        return Listful(self._results, self._source.fields)
+
 
 class Listful(typing.List[T]):
     def __init__(
@@ -45,7 +50,7 @@ class Listful(typing.List[T]):
         getter: typing.Optional[typing.Callable[[T, str], typing.Any]] = None,
     ):
         super().__init__(iterable)
-        self._fields = fields
+        self.fields = fields
         if getter is None:
             # pylint: disable=unsubscriptable-object
             if len(self) > 0 and isinstance(self[0], dict):
@@ -62,7 +67,7 @@ class Listful(typing.List[T]):
 
     def _build_indexes(self) -> None:
         self._indexes = {}
-        for field in self._fields:
+        for field in self.fields:
             index = self._indexes[field] = collections.defaultdict(list)
             for element in self:  # pylint: disable=not-an-iterable
                 value = self._getter(element, field)
@@ -87,7 +92,7 @@ class Listful(typing.List[T]):
                 ]
         if results is None:
             results = self
-        return Results(results, filter_=kwargs)
+        return Results(results, filter_=kwargs, source=self)
 
     def get_all_for_field(self, field: str) -> typing.List[T]:
         if field in self._indexes:
@@ -102,7 +107,7 @@ class Listful(typing.List[T]):
         ]
 
     def rebuild_indexes_for_item(self, item: T) -> None:
-        for field in self._fields:
+        for field in self.fields:
             value = self._getter(item, field)
             self._indexes[field][value].append(item)
 
@@ -111,7 +116,7 @@ class Listful(typing.List[T]):
         self.rebuild_indexes_for_item(item)
 
     def _remove_item_from_indexes(self, item: T) -> None:
-        for field in self._fields:
+        for field in self.fields:
             value = self._getter(item, field)
             self._indexes[field][value].remove(item)
 
