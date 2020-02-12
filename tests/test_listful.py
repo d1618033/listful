@@ -6,8 +6,8 @@ from listful import Listful, MoreThanOneResultException, NotFoundException
 from listful._internal.testing_utils import Item
 from listful.exceptions import ListfulsMismatchException
 
-BasicListful = Listful[typing.Dict[str, int]]
-ObjectListful = Listful[Item]
+BasicListful = Listful[typing.Dict[str, int], int]
+ObjectListful = Listful[Item, int]
 
 
 def test_filter_one_or_none(basic_listful: BasicListful) -> None:
@@ -93,7 +93,7 @@ def test_object_listful_custom_getter(
 
 
 def test_filter_non_indexed_field() -> None:
-    items = Listful([{'x': 1, 'y': 2}, {'x': 3, 'y': 4}], fields=['x'])
+    items = BasicListful([{'x': 1, 'y': 2}, {'x': 3, 'y': 4}], fields=['x'])
     assert items.filter(y=2).one_or_none() == {'x': 1, 'y': 2}
     assert items.get_all_for_field('y') == [2, 4]
 
@@ -122,7 +122,7 @@ def test_to_listful(basic_listful: BasicListful) -> None:
 
 def test_from_listfuls(basic_listful: BasicListful) -> None:
     items = Listful.from_listfuls(
-        [basic_listful, Listful([{'x': 17, 'y': 17}], fields=['x', 'y'])]
+        [basic_listful, BasicListful([{'x': 17, 'y': 17}], fields=['x', 'y'])]
     )
     assert items.filter(x=17).one_or_none() == {'x': 17, 'y': 17}
     assert items.filter(x=1).one_or_none() == {'x': 1, 'y': 2}
@@ -131,14 +131,17 @@ def test_from_listfuls(basic_listful: BasicListful) -> None:
 def test_from_listfuls_mismatch_indexes(basic_listful: BasicListful) -> None:
     with pytest.raises(ListfulsMismatchException):
         Listful.from_listfuls(
-            [basic_listful, Listful([{'x': 17, 'y': 17}], fields=['y'])]
+            [basic_listful, BasicListful([{'x': 17, 'y': 17}], fields=['y'])]
         )
 
 
 def test_from_listfuls_mismatch_getter(basic_listful: BasicListful) -> None:
     with pytest.raises(ListfulsMismatchException):
         Listful.from_listfuls(  # type: ignore
-            [basic_listful, Listful([Item(x=17, y=17)], fields=['x', 'y'])]
+            [
+                basic_listful,
+                ObjectListful([Item(x=17, y=17)], fields=['x', 'y']),
+            ]
         )
 
 
