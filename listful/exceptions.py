@@ -4,3 +4,7 @@ class NotFoundException(BaseException):
 
 class MoreThanOneResultException(BaseException):
     pass
+
+
+class ListfulsMismatchException(BaseException):
+    pass

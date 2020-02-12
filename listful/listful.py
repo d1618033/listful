@@ -2,7 +2,11 @@ import collections
 import operator
 import typing
 
-from listful.exceptions import MoreThanOneResultException, NotFoundException
+from listful.exceptions import (
+    ListfulsMismatchException,
+    MoreThanOneResultException,
+    NotFoundException,
+)
 
 T = typing.TypeVar('T')
 
@@ -59,7 +63,7 @@ class Listful(typing.List[T]):
                 )
             else:
                 getter = getattr
-        self._getter: typing.Callable[[T, str], typing.Any] = getter
+        self.getter: typing.Callable[[T, str], typing.Any] = getter
         self._indexes: typing.Dict[
             str, typing.Dict[typing.Any, typing.List[T]]
         ] = {}
@@ -70,7 +74,7 @@ class Listful(typing.List[T]):
         for field in self.fields:
             index = self._indexes[field] = collections.defaultdict(list)
             for element in self:  # pylint: disable=not-an-iterable
-                value = self._getter(element, field)
+                value = self.getter(element, field)
                 index[value].append(element)
 
     def filter(self, **kwargs: typing.Any) -> Results[T]:
@@ -82,7 +86,7 @@ class Listful(typing.List[T]):
                 new_results = [
                     element
                     for element in self  # pylint: disable=not-an-iterable
-                    if self._getter(element, field) == value
+                    if self.getter(element, field) == value
                 ]
             if results is None:
                 results = new_results
@@ -96,13 +100,13 @@ class Listful(typing.List[T]):
 
     def get_all_for_field(self, field: str) -> typing.List[T]:
         return [
-            self._getter(element, field)
+            self.getter(element, field)
             for element in self  # pylint: disable=not-an-iterable
         ]
 
     def rebuild_indexes_for_item(self, item: T) -> None:
         for field in self.fields:
-            value = self._getter(item, field)
+            value = self.getter(item, field)
             self._indexes[field][value].append(item)
 
     def append(self, item: T) -> None:
@@ -111,7 +115,7 @@ class Listful(typing.List[T]):
 
     def _remove_item_from_indexes(self, item: T) -> None:
         for field in self.fields:
-            value = self._getter(item, field)
+            value = self.getter(item, field)
             self._indexes[field][value].remove(item)
 
     def remove(self, item: T) -> None:
@@ -165,3 +169,26 @@ class Listful(typing.List[T]):
     def extend(self, iterable: typing.Iterable[T]) -> None:
         for element in iterable:
             self.append(element)
+
+    @classmethod
+    def from_listfuls(
+        cls, listfuls: typing.Iterable['Listful[T]']
+    ) -> 'Listful[T]':
+        listfuls_iterator = iter(listfuls)
+        try:
+            result = next(listfuls_iterator)
+        except StopIteration:
+            raise ValueError('Expected at least one listful object')
+        fields = set(result.fields)
+        getter = result.getter
+        for listful_obj in listfuls_iterator:
+            if set(listful_obj.fields) != fields:
+                raise ListfulsMismatchException(
+                    f"Can't merge listfuls with different indexes {listful_obj.fields} != {fields}"
+                )
+            if listful_obj.getter != getter:
+                raise ListfulsMismatchException(
+                    f"Can't merge listfuls with different getters {listful_obj.getter} != {getter}"
+                )
+            result.extend(listful_obj)
+        return result

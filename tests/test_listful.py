@@ -4,6 +4,7 @@ import pytest
 
 from listful import Listful, MoreThanOneResultException, NotFoundException
 from listful._internal.testing_utils import Item
+from listful.exceptions import ListfulsMismatchException
 
 BasicListful = Listful[typing.Dict[str, int]]
 ObjectListful = Listful[Item]
@@ -117,3 +118,30 @@ def test_to_listful(basic_listful: BasicListful) -> None:
     assert basic_listful.filter(x=3).to_listful().filter(
         y=4
     ).one_or_none() == {'x': 3, 'y': 4}
+
+
+def test_from_listfuls(basic_listful: BasicListful) -> None:
+    items = Listful.from_listfuls(
+        [basic_listful, Listful([{'x': 17, 'y': 17}], fields=['x', 'y'])]
+    )
+    assert items.filter(x=17).one_or_none() == {'x': 17, 'y': 17}
+    assert items.filter(x=1).one_or_none() == {'x': 1, 'y': 2}
+
+
+def test_from_listfuls_mismatch_indexes(basic_listful: BasicListful) -> None:
+    with pytest.raises(ListfulsMismatchException):
+        Listful.from_listfuls(
+            [basic_listful, Listful([{'x': 17, 'y': 17}], fields=['y'])]
+        )
+
+
+def test_from_listfuls_mismatch_getter(basic_listful: BasicListful) -> None:
+    with pytest.raises(ListfulsMismatchException):
+        Listful.from_listfuls(  # type: ignore
+            [basic_listful, Listful([Item(x=17, y=17)], fields=['x', 'y'])]
+        )
+
+
+def test_from_listfuls_empty() -> None:
+    with pytest.raises(ValueError):
+        Listful.from_listfuls([])
