@@ -7,6 +7,7 @@ from listful.exceptions import (
     MoreThanOneResultException,
     NotFoundException,
 )
+from listful.utils import intersect_lists
 
 T = typing.TypeVar('T')
 
@@ -91,9 +92,7 @@ class Listful(typing.List[T]):
             if results is None:
                 results = new_results
             else:
-                results = [
-                    result for result in results if result in new_results
-                ]
+                results = intersect_lists(results, new_results)
         if results is None:
             results = self
         return Results(results, filter_=kwargs, source=self)
