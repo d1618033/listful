@@ -85,7 +85,7 @@ def test_object_listful(object_listful: ObjectListful) -> None:
 
 
 def test_object_listful_custom_getter(
-    object_custom_getter_listful: ObjectListful
+    object_custom_getter_listful: ObjectListful,
 ) -> None:
     assert object_custom_getter_listful.filter(x=3, y=4).one_or_none() == Item(
         x=3, y=4
@@ -146,8 +146,8 @@ def test_from_listfuls_mismatch_indexes(basic_listful: BasicListful) -> None:
 
 def test_from_listfuls_mismatch_getter(basic_listful: BasicListful) -> None:
     with pytest.raises(ListfulsMismatchException):
-        Listful.from_listfuls(  # type: ignore
-            [
+        Listful.from_listfuls(
+            [  # type: ignore
                 basic_listful,
                 ObjectListful([Item(x=17, y=17)], fields=['x', 'y']),
             ]
