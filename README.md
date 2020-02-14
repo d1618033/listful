@@ -118,11 +118,11 @@ A comparison of filtering with listful vs filtering with pandas (with/without in
 
 |   | listful | pandas | pandas_with_index |
 | --- | --- | --- | --- |
-| init | 1.52e-01 | 3.16e-01 | 4.85e-02 |
-| filter:1 | 2.15e-05 | 1.28e-03 | 1.71e-03 |
-| filter:n | 1.99e-01 | 8.23e+01 | 1.53e+01 |
+| init | 7.63e-02 | 3.03e-01 | 5.24e-02 |
+| filter:1 | 2.07e-05 | 1.46e-03 | 1.79e-03 |
+| filter:n | 2.02e-01 | 7.40e+01 | 1.54e+01 |
 
-Initialization is slower, but if you want to filter within a loop, it's 70x faster (even with pandas indexing)
+70x faster than pandas without indexing, 360x faster than pandas with indexing.
 
 ## For developers
 

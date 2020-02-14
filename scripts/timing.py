@@ -28,7 +28,7 @@ def time_it(category, sub_category):
 def time_listful(data):
     with time_it("listful", "init"):
         import listful
-        items = listful.Listful(data, ["x", "y"])
+        items = listful.Listful(data, ["y"])
     with time_it("listful", "filter:1"):
         items.filter(y=10).one_or_none()
     with time_it("listful", "filter:n"):
