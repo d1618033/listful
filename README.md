@@ -1,7 +1,7 @@
 # listful
 
 [![pypi](https://badge.fury.io/py/listful.svg)](https://pypi.org/project/listful)
-[![Python: 3.6+](https://img.shields.io/badge/Python-3.6+-blue.svg)](https://pypi.org/project/listful)
+[![Python: 3.7+](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://pypi.org/project/listful)
 [![Downloads](https://img.shields.io/pypi/dm/listful.svg)](https://pypistats.org/packages/listful)
 [![Build Status](https://travis-ci.org/d1618033/listful.svg?branch=master)](https://travis-ci.org/d1618033/listful)
 [![Code coverage](https://codecov.io/gh/d1618033/listful/branch/master/graph/badge.svg)](https://codecov.io/gh/d1618033/listful)
@@ -109,6 +109,19 @@ Listful supports also lists of objects:
 >>> items.filter(x=1).one_or_none()
 Item(x=1, y=10)
 ```
+
+## Performance
+
+See `scripts/timing.py`. 
+
+A comparison of filtering with listful vs filtering with pandas (with/without index)
+
+|   | listful | pandas | pandas_with_index |
+| --- | --- | --- | --- |
+| init | 1.27e+01 | 3.13e+00 | 2.83e+00 |
+| filter:1 | 2.03e-05 | 1.59e-02 | 4.75e-01 |
+| filter:2 | 5.48e-06 | 5.97e-03 | 2.58e-04 
+
 ## For developers
 
 ### Create venv and install deps
