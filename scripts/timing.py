@@ -31,8 +31,9 @@ def time_listful(data):
         items = listful.Listful(data, ["x", "y"])
     with time_it("listful", "filter:1"):
         items.filter(y=10).one_or_none()
-    with time_it("listful", "filter:2"):
-        items.filter(y=20).one_or_none()
+    with time_it("listful", "filter:n"):
+        for i in range(len(data)):
+            items.filter(y=i*10).one_or_none()
 
 
 def time_pandas(data):
@@ -41,8 +42,10 @@ def time_pandas(data):
         df = pandas.DataFrame(data, columns=["x", "y"])
     with time_it("pandas", "filter:1"):
         df.loc[df.y == 10, :].to_dict('record')
-    with time_it("pandas", "filter:2"):
-        df.loc[df.y == 20, :].to_dict('record')
+    with time_it("pandas", "filter:n"):
+        for i in range(len(data)):
+            df.loc[df.y == (i*10), :].to_dict('record')
+
 
 
 def time_pandas_with_index(data):
@@ -53,9 +56,10 @@ def time_pandas_with_index(data):
     with time_it("pandas_with_index", "filter:1"):
         result = df.loc[10, :].to_dict()
         result['y'] = 10
-    with time_it("pandas_with_index", "filter:2"):
-        result = df.loc[20, :].to_dict()
-        result['y'] = 20
+    with time_it("pandas_with_index", f"filter:n"):
+        for i in range(len(data)):
+            result = df.loc[i * 10, :].to_dict()
+            result['y'] = 20
 
 
 def print_markdownrow(items):
@@ -63,7 +67,7 @@ def print_markdownrow(items):
 
 
 def main():
-    n = 10 ** 6 * 5
+    n = 10 ** 5
     data = [{"x": i, "y": 10 * i} for i in range(n)]
     time_listful(data)
     time_pandas(data)
