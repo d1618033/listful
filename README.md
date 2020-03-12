@@ -122,7 +122,7 @@ A comparison of filtering with listful vs filtering with pandas (with/without in
 | filter:1 | 2.07e-05 | 1.46e-03 | 1.79e-03 |
 | filter:n | 2.02e-01 | 7.40e+01 | 1.54e+01 |
 
-70x faster than pandas without indexing, 360x faster than pandas with indexing.
+70x faster than pandas with indexing, 360x faster than pandas without indexing.
 
 ## For developers
 
