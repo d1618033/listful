@@ -155,5 +155,7 @@ def test_from_listfuls_mismatch_getter(basic_listful: BasicListful) -> None:
 
 
 def test_from_listfuls_empty() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match='Expected at least one listful object'
+    ):
         Listful.from_listfuls([])
