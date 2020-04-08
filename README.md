@@ -166,6 +166,11 @@ MIT
 Unreleased
 -----
 
+* ...
+
+0.2.0 - 2020-04-08
+-----
+
 * Add support for default fields
 
 0.1.3 - 2020-02-14
