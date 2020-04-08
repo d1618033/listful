@@ -28,6 +28,9 @@ Initialize with the fields you want to filter by:
 ... )
 ```
 
+(If you don't specify the fields, all the fields whose corresponding values are hashable will be chosen)
+
+
 ### Filtering:
 
 * By one field:
@@ -110,6 +113,16 @@ Listful supports also lists of objects:
 Item(x=1, y=10)
 ```
 
+Here too, if you don't specify the fields, all fields with hashable values will be chosen:
+
+```
+>>> items = Listful(
+...    [Item(x=1, y=10), Item(x=2, y=20), Item(x=2, y=30)], 
+... )
+>>> items.fields
+['x', 'y']
+```
+
 ## Performance
 
 See `scripts/timing.py`. 
@@ -153,7 +166,7 @@ MIT
 Unreleased
 -----
 
-* ...
+* Add support for default fields
 
 0.1.3 - 2020-02-14
 -----

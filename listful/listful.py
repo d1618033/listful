@@ -12,11 +12,10 @@ class Listful(typing.List[ITEM], typing.Generic[ITEM, VALUE]):
     def __init__(
         self,
         iterable: typing.Iterable[ITEM],
-        fields: typing.List[FIELD],
+        fields: typing.Optional[typing.List[FIELD]] = None,
         getter: typing.Optional[GETTER[ITEM, VALUE]] = None,
     ):
         super().__init__(iterable)
-        self.fields = fields
         if getter is None:
             # pylint: disable=unsubscriptable-object
             if len(self) > 0 and isinstance(self[0], dict):
@@ -24,6 +23,20 @@ class Listful(typing.List[ITEM], typing.Generic[ITEM, VALUE]):
             else:
                 getter = getattr
         self.getter: GETTER[ITEM, VALUE] = getter
+        if fields is None:
+            if len(self) == 0:
+                raise ValueError('fields is required when iterable is empty')
+            first_item = self[0]  # pylint: disable=unsubscriptable-object
+            if isinstance(first_item, dict):
+                potential_fields = first_item
+            else:
+                potential_fields = vars(first_item)
+            fields = sorted(
+                field
+                for field, value in potential_fields.items()
+                if hasattr(value, '__hash__') and value.__hash__ is not None
+            )
+        self.fields = fields
         self._indexes: typing.Dict[FIELD, Index[ITEM, VALUE]] = {}
         self._build_indexes()
 

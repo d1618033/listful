@@ -159,3 +159,22 @@ def test_from_listfuls_empty() -> None:
         ValueError, match='Expected at least one listful object'
     ):
         Listful.from_listfuls([])
+
+
+def test_no_fields_supplied_and_no_data() -> None:
+    with pytest.raises(
+        ValueError, match='fields is required when iterable is empty'
+    ):
+        Listful([])
+
+
+def test_no_fields_supplied_and_data_has_dict() -> None:
+    listful: Listful[typing.Dict[str, typing.Any], typing.Any] = Listful(
+        [{'a': 1, 'b': [5, 7]}]
+    )
+    assert listful.fields == ['a']
+
+
+def test_no_fields_supplied_and_data_has_object() -> None:
+    listful: Listful[Item, int] = Listful([Item(x=1, y=2)])
+    assert listful.fields == ['x', 'y']
