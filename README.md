@@ -20,13 +20,12 @@ Efficient filtering of lists of objects
 
 
 Initialize with the fields you want to filter by:
-```
->>> from listful import Listful
->>> data = Listful(
-...    [{'x': 1, 'y': 10}, {'x': 2, 'y': 20}, {'x': 2, 'y': 30}], 
-...    fields=['x', 'y']
-... )
-```
+
+        >>> from listful import Listful
+        >>> data = Listful(
+        ...    [{'x': 1, 'y': 10}, {'x': 2, 'y': 20}, {'x': 2, 'y': 30}], 
+        ...    fields=['x', 'y']
+        ... )
 
 (If you don't specify the fields, all the fields whose corresponding values are hashable will be chosen)
 
@@ -34,94 +33,92 @@ Initialize with the fields you want to filter by:
 ### Filtering:
 
 * By one field:
-```
->>> data.filter(x=1).one_or_none()
-{'x': 1, 'y': 10}
->>> data.filter(y=20).one_or_none()
-{'x': 2, 'y': 20}
-```
+
+        >>> data.filter(x=1).one_or_none()
+        {'x': 1, 'y': 10}
+        >>> data.filter(y=20).one_or_none()
+        {'x': 2, 'y': 20}
 
 * By one field, with more than one result:
-```
->>> data.filter(x=2).to_list()
-[{'x': 2, 'y': 20}, {'x': 2, 'y': 30}]
-```
+
+        >>> data.filter(x=2).to_list()
+        [{'x': 2, 'y': 20}, {'x': 2, 'y': 30}]
+
 
 * By two fields:
-```
->>> data.filter(x=2, y=30).one_or_none()
-{'x': 2, 'y': 30}
-```
+
+        >>> data.filter(x=2, y=30).one_or_none()
+        {'x': 2, 'y': 30}
+
 
 * Raise exception if more than one found
-``` 
->>> data.filter(x=2).one_or_raise()
-Traceback (most recent call last):
-<...>
-listful.exceptions.MoreThanOneResultException: Found more than one result for filter {'x': 2}: [{'x': 2, 'y': 20}, {'x': 2, 'y': 30}]
-```
+
+        >>> data.filter(x=2).one_or_raise()
+        Traceback (most recent call last):
+        <...>
+        listful.exceptions.MoreThanOneResultException: Found more than one result for filter {'x': 2}: [{'x': 2, 'y': 20}, {'x': 2, 'y': 30}]
+
 
 * Get all values for a specific field
 
-```
->>> data.get_all_for_field('x')
-[1, 2, 2]
-```
+
+        >>> data.get_all_for_field('x')
+        [1, 2, 2]
+
 
 ### Updating indexes:
 
 `Listful` has the same api as `list`, so you can get/set/delete items the same way 
 and the indices will be updated automatically
 
-```
->>> data[0] = {'x': 17, 'y': 17}
->>> data.filter(x=17).one_or_none()
-{'x': 17, 'y': 17}
->>> data[0]
-{'x': 17, 'y': 17}
->>> del data[0]
->>> data.filter(x=17).one_or_none()
-``` 
+
+        >>> data[0] = {'x': 17, 'y': 17}
+        >>> data.filter(x=17).one_or_none()
+        {'x': 17, 'y': 17}
+        >>> data[0]
+        {'x': 17, 'y': 17}
+        >>> del data[0]
+        >>> data.filter(x=17).one_or_none()
 
 If you want to modify an element and update the indices you can do so explicitly:
-```
->>> data[0]['x'] = 1
->>> data.rebuild_indexes_for_item(data[0])
->>> data.filter(x=1).one_or_none()
-{'x': 1, 'y': 20}
-``` 
+
+        >>> data[0]['x'] = 1
+        >>> data.rebuild_indexes_for_item(data[0])
+        >>> data.filter(x=1).one_or_none()
+        {'x': 1, 'y': 20}
+
 
 
 ### Objects:
 
 Listful supports also lists of objects:
 
-```
->>> class Item:
-...     def __init__(self, x, y):
-...         self.x = x
-...         self.y = y
-...
-...     def __repr__(self):
-...         return f"Item(x={self.x}, y={self.y})"
 
->>> items = Listful(
-...    [Item(x=1, y=10), Item(x=2, y=20), Item(x=2, y=30)], 
-...    fields=['x', 'y']
-... )
->>> items.filter(x=1).one_or_none()
-Item(x=1, y=10)
-```
+        >>> class Item:
+        ...     def __init__(self, x, y):
+        ...         self.x = x
+        ...         self.y = y
+        ...
+        ...     def __repr__(self):
+        ...         return f"Item(x={self.x}, y={self.y})"
+
+        >>> items = Listful(
+        ...    [Item(x=1, y=10), Item(x=2, y=20), Item(x=2, y=30)], 
+        ...    fields=['x', 'y']
+        ... )
+        >>> items.filter(x=1).one_or_none()
+        Item(x=1, y=10)
+
 
 Here too, if you don't specify the fields, all fields with hashable values will be chosen:
 
-```
->>> items = Listful(
-...    [Item(x=1, y=10), Item(x=2, y=20), Item(x=2, y=30)], 
-... )
->>> items.fields
-['x', 'y']
-```
+
+        >>> items = Listful(
+        ...    [Item(x=1, y=10), Item(x=2, y=20), Item(x=2, y=30)], 
+        ... )
+        >>> items.fields
+        ['x', 'y']
+
 
 ## Performance
 

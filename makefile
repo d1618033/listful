@@ -9,7 +9,7 @@ init:
 
 test:
 	$(BIN) pytest --verbosity=2 --showlocals --strict --log-level=DEBUG --cov=$(CODE) $(args)
-	$(BIN) byexample -l python README.md
+	$(BIN) byexample -o "+norm-ws" -l python README.md
 
 testreport:
 	$(BIN) pytest --verbosity=2 --showlocals --strict --log-level=DEBUG --cov=$(CODE) --cov-report=html $(args)
