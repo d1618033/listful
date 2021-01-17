@@ -26,7 +26,9 @@ class SimpleIndex(Index[ITEM, VALUE]):
         ] = collections.defaultdict(list)
 
     def add(self, element: ITEM, value: VALUE) -> None:
-        self._index[value].append(element)
+        elements = self._index[value]
+        if element not in elements:
+            elements.append(element)
 
     def remove(self, element: ITEM, value: VALUE) -> None:
         self._index[value].remove(element)

@@ -178,3 +178,9 @@ def test_no_fields_supplied_and_data_has_dict() -> None:
 def test_no_fields_supplied_and_data_has_object() -> None:
     listful: Listful[Item, int] = Listful([Item(x=1, y=2)])
     assert listful.fields == ['x', 'y']
+
+
+def test_build_indexes_for_one_item() -> None:
+    listful: Listful[Item, int] = Listful([Item(x=1, y=2)])
+    listful.rebuild_indexes_for_item(listful[0])
+    listful.filter(x=1).one_or_raise()
