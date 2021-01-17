@@ -124,9 +124,8 @@ def test_extend(basic_listful: BasicListful) -> None:
 
 
 def test_to_listful(basic_listful: BasicListful) -> None:
-    assert basic_listful.filter(x=3).to_listful().filter(
-        y=4
-    ).one_or_none() == {'x': 3, 'y': 4}
+    listful = basic_listful.filter(x=3).to_listful()
+    assert listful.filter(y=4).one_or_none() == {'x': 3, 'y': 4}
 
 
 def test_from_listfuls(basic_listful: BasicListful) -> None:

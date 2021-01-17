@@ -144,8 +144,8 @@ class Listful(typing.List[ITEM], typing.Generic[ITEM, VALUE]):
         listfuls_iterator = iter(listfuls)
         try:
             result = next(listfuls_iterator)
-        except StopIteration:
-            raise ValueError('Expected at least one listful object')
+        except StopIteration as e:
+            raise ValueError('Expected at least one listful object') from e
         fields = set(result.fields)
         getter = result.getter
         for listful_obj in listfuls_iterator:
